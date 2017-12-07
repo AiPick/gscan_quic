@@ -7,7 +7,9 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 	"time"
@@ -84,8 +86,16 @@ func main() {
 		if r := recover(); r != nil {
 			panic(fmt.Sprintf("panic: %s\n", r))
 		}
-		fmt.Println("\nPress [Enter] to exit...")
-		fmt.Scanln()
+		fmt.Println()
+		if runtime.GOOS == "windows" {
+			cmd := exec.Command("cmd", "/C", "pause")
+			cmd.Stdout = os.Stdout
+			cmd.Stdin = os.Stdin
+			cmd.Run()
+		} else {
+			fmt.Println("Press [Enter] to exit...")
+			fmt.Scanln()
+		}
 	}()
 
 	var cfgfile string
@@ -149,17 +159,20 @@ func main() {
 		}
 	}()
 
-	options := ScanOptions{
+	options := &ScanOptions{
 		Config: Config,
 	}
 
 	log.Printf("Start loading IP Range file: %s\n", iprangeFile)
-	ipranges, err := parseIPRangeFile(iprangeFile)
+	ipqueue, err := parseIPRangeFile(iprangeFile)
 	if err != nil {
 		log.Panicln(err)
 	}
 
-	Scan(&options, cfg, ipranges)
+	log.Printf("Start scanning available IP\n")
+	startTime := time.Now()
+	count := Scan(options, cfg, ipqueue)
+	log.Printf("Scanned %d IP in %s, found %d records\n", count, time.Since(startTime).String(), len(options.records))
 
 	if records := options.records; len(records) > 0 {
 		sort.Slice(records, func(i, j int) bool {

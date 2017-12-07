@@ -30,7 +30,7 @@
 		// HTTPVerifyHosts 是 http 测试时使用的测试地址, 默认一个
 		// 如果设置多个, 将会依次进行测试
 		"HTTPVerifyHosts": ["dns.google.com"],
-		"HandshakeTimeout": 3000,
+		"HandshakeTimeout": 2500,
 		"ScanMinRTT": 0,
 		"ScanMaxRTT": 3000,
 		// 结果的限制数量, 比如: 设置成 100, 将会扫到100个IP后自动结束
@@ -72,7 +72,7 @@
 		// "HTTPVerifyHosts": ["dns.google.com"],
 		
 		// TLS 握手时间设置
-		"HandshakeTimeout": 3000,
+		"HandshakeTimeout": 2500,
 		"ScanMinRTT": 0,
 		"ScanMaxRTT": 3000,
 		"RecordLimit": 200,
